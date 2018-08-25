@@ -1,0 +1,47 @@
+{
+  "name": "Seaquest-CLI",
+  "version": "1.0.2-beta",
+  "description": "A simplified tool for quick restful requests",
+  "main": "index.js",
+  "dependencies": {
+    "ajv": "^6.5.3",
+    "ajv-keywords": "^3.2.0",
+    "chalk": "^2.4.1",
+    "command-line-args": "^5.0.2",
+    "eslint": "^5.4.0",
+    "request": "^2.88.0"
+  },
+  "devDependencies": {
+    "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-node": "^7.0.1",
+    "eslint-plugin-promise": "^4.0.0",
+    "eslint-plugin-standard": "^3.1.0"
+  },
+  "scripts": {
+    "test": "node index.js http://www.omdbapi.com/ -a apikey=297b81a2 t=seaquest -j -v"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mfedatto/seaquest-cli.git"
+  },
+  "keywords": [
+    "rest",
+    "request",
+    "httpclient",
+    "client",
+    "seaquest",
+    "sea",
+    "quest",
+    "mfedatto"
+  ],
+  "author": "Maurício Fedatto",
+  "license": "MIT",
+  "bin": {
+    "seaquest": "./index.js"
+  },
+  "bugs": {
+    "url": "https://github.com/mfedatto/seaquest-cli/issues"
+  },
+  "homepage": "https://github.com/mfedatto/seaquest-cli#readme"
+}
