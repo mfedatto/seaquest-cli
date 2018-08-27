@@ -4,7 +4,7 @@ Seaquest is a command-line tool for quick restful requests directly from the com
 
 ## Getting started
 
-To run Seaquest, make sure you have Node.js >= v6. [Install Node.js via package manager](https://nodejs.org/en/download/package-manager/).
+To run Seaquest, make sure you have Node.js v6 or higher. [Install Node.js via package manager](https://nodejs.org/en/download/package-manager/).
 
 ### Installation
 
