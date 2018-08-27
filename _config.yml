@@ -1,1 +1,5 @@
 theme: jekyll-theme-cayman
+title: Seaquest-CLI
+description: Seaquest is a command-line tool for quick restful requests directly from the command-line.
+show_downloads: true
+google_analytics: UA-269975-34
