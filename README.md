@@ -38,18 +38,28 @@ $ seaquest http://www.omdbapi.com -a apikey=297b81a2 t=seaquest
 
 For the complete list or arguments you may inform `-?`, `--help` argument.
 
-| Argument                | Default | Type       | Multiple | Description | Example |
-| ----------------------- |:------- |:---------- |:--------:|:----------- |:------- |
-| `-e`, `--endpoint`      |         | `String`   | No       | The remote address for the calling endpoint. The argument name may be suppressed when its value is the first argument | `seaquest https://api.ipify.org` |
-| `-a`, `--arguments`     |         | `String[]` | Yes      | The key and value strings for the arguments to be sent | `-a apikey=297b81a2 t=seaquest` |
-| `-m`, `--method`        | `GET`   | `String`   | No       | The method to be used for calling the endpoint | `seaqeuest https://api.ipify.org -m GET` |
-| `-h`, `--headers`       |         | `String[]` | Yes      | The key and value strings for the headers to be sent | `-h "X-User-Token: 1a2b3c4d" "X-Client-Agent: Seaquest-CLI"` |
-| `-t`, `--timeout`       | `30000` | `Number`   | No       | The millisecond amount limit for receiving a response | `-t 10000` |
-| `-l`, `--responseLimit` | `5120`  | `Number`   | No       | The maximum size of response body to output in the console | `-l 300` |
-| `-u`, `--uncutResponse` | `false` | `Boolean`  | No       | Indicates if the response should not be limited | `-u` |
-| `-j`, `--json`          | `false` | `Boolean`  | No       | Indicates if the response should be displayed as `JSON` | `-j` |
-| `-v`, `--verbose`       | `false` | `Boolean`  | No       | Indicates if Seaquest should output all information about both request and response | `-v` |
-| `-?`, `--help`          | `false` | `Boolean`  | No       | Indicates if help info should be shown instead of making any call to an endpoint | `-?` |
+| Argument                | Default | Type       | Multiple | Description |
+| ----------------------- |:------- |:---------- |:--------:|:----------- |
+| `-e`, `--endpoint`      |         | `String`   | No       | The remote address for the calling endpoint. The argument name may be suppressed when its value is the first argument
+`seaquest https://api.ipify.org` |
+| `-a`, `--arguments`     |         | `String[]` | Yes      | The key and value strings for the arguments to be sent
+`-a apikey=297b81a2 t=seaquest` |
+| `-m`, `--method`        | `GET`   | `String`   | No       | The method to be used for calling the endpoint
+`seaqeuest https://api.ipify.org -m GET` |
+| `-h`, `--headers`       |         | `String[]` | Yes      | The key and value strings for the headers to be sent
+`-h "X-User-Token: 1a2b3c4d" "X-Client-Agent: Seaquest-CLI"` |
+| `-t`, `--timeout`       | `30000` | `Number`   | No       | The millisecond amount limit for receiving a response
+`-t 10000` |
+| `-l`, `--responseLimit` | `5120`  | `Number`   | No       | The maximum size of response body to output in the console
+`-l 300` |
+| `-u`, `--uncutResponse` | `false` | `Boolean`  | No       | Indicates if the response should not be limited
+`-u` |
+| `-j`, `--json`          | `false` | `Boolean`  | No       | Indicates if the response should be displayed as `JSON`
+`-j` |
+| `-v`, `--verbose`       | `false` | `Boolean`  | No       | Indicates if Seaquest should output all information about both request and response
+`-v` |
+| `-?`, `--help`          | `false` | `Boolean`  | No       | Indicates if help info should be shown instead of making any call to an endpoint
+`-?` |
 
 ## Contributing
 
