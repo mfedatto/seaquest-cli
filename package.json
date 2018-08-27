@@ -1,6 +1,7 @@
 {
-  "name": "Seaquest-CLI",
-  "version": "1.0.2-beta",
+  "name": "seaquest-cli",
+  "headline": "Seaquest-CLI",
+  "version": "1.0.3-beta",
   "description": "A simplified tool for quick restful requests",
   "main": "index.js",
   "dependencies": {
