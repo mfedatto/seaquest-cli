@@ -37,7 +37,9 @@
     "quest",
     "mfedatto"
   ],
-  "author": "Maurício Fedatto",
+  "author": {
+    "name": "Maurício Fedatto"
+  },
   "license": "MIT",
   "bin": {
     "seaquest": "./index.js"

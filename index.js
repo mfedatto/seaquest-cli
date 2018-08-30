@@ -32,7 +32,7 @@
   try {
     let showHeader = function () {
       console.log()
-      console.log(thisPackage.headline + ' v' + thisPackage.version.replace('-beta', chalk.yellow(' beta')) + ' by ' + thisPackage.author)
+      console.log(thisPackage.headline + ' v' + thisPackage.version.replace('-beta', chalk.yellow(' beta')) + ' by ' + thisPackage.author.name)
       console.log(thisPackage.description)
       console.log()
     }
