@@ -7,12 +7,16 @@
   const thisPackage = require('./package.json')
   const request = require('request')
   const commandLineArgs = require('command-line-args')
+  const sleep = require('system-sleep')
   const optionDefinitions = [
     { name: 'endpoint', alias: 'e', type: String, defaultOption: true },
     { name: 'arguments', alias: 'a', type: String, multiple: true },
     { name: 'method', alias: 'm', type: String },
     { name: 'headers', alias: 'h', type: String, multiple: true },
     { name: 'timeout', alias: 't', type: Number },
+    { name: 'body', alias: 'b', type: Number },
+    { name: 'iterations', alias: 'i', type: Number },
+    { name: 'iterationsIntervalTime', alias: 'r', type: Number },
     { name: 'uncutResponse', alias: 'u', type: Boolean },
     { name: 'responseLimit', alias: 'l', type: Number },
     { name: 'responseJson', alias: 'j', type: Boolean },
@@ -23,6 +27,7 @@
   let requestOptions = null
   let executionStart = null
   let executionEnd = null
+  let overallIteration = 0
 
   try {
     let showHeader = function () {
@@ -32,15 +37,26 @@
       console.log()
     }
     let ensureArguments = function () {
-      if (options.method === undefined) options.method = 'GET'
-      if (options.arguments === undefined) options.arguments = []
-      if (options.headers === undefined) options.headers = []
-      if (options.uncutResponse === undefined) options.uncutResponse = false
-      if (options.responseLimit === undefined) options.responseLimit = 5120
-      if (options.json === undefined) options.json = false
-      if (options.timeout === undefined) options.timeout = 30000
-      if (options.verbose === undefined) options.verbose = false
-      if (options.help === undefined) options.help = false
+      let setDefaultValue = function (argument, defaultValue) {
+        let argumentValue = options[argument]
+
+        if (argumentValue === undefined || argumentValue === null) {
+          options[argument] = defaultValue
+        }
+      }
+
+      setDefaultValue('method', 'GET')
+      setDefaultValue('arguments', [])
+      setDefaultValue('headers', [])
+      setDefaultValue('uncutResponse', false)
+      setDefaultValue('responseLimit', 5120)
+      setDefaultValue('json', false)
+      setDefaultValue('timeout', 30000)
+      setDefaultValue('verbose', false)
+      setDefaultValue('help', false)
+      setDefaultValue('iterations', 1)
+      setDefaultValue('body', undefined)
+      setDefaultValue('iterationsIntervalTime', 1000)
     }
     let buildRequestOptions = function () {
       if (buildRequestOptions.requestOptions === undefined) {
@@ -54,6 +70,10 @@
 
         for (let iArg = 0; iArg < options.arguments.length; iArg++) {
           req.uri += ((iArg === 0) ? '?' : '&') + options.arguments[iArg]
+        }
+
+        if (options.body !== undefined) {
+          req.multipart = [{ body: options.body }]
         }
 
         buildRequestOptions.requestOptions = req
@@ -71,64 +91,81 @@
       }
     }
     let execute = function () {
-      executionStart = new Date()
-      
-      request(requestOptions, function (error, response, body) {
-        executionEnd = new Date()
-        
-        showResponse(error, response, body)
-      })
+      for (let currentIteration = 0; currentIteration < options.iterations; currentIteration++) {
+        executionStart = new Date()
+
+        request(requestOptions, function (error, response, body) {
+          executionEnd = new Date()
+
+          showResponse(error, response, body)
+        })
+
+        sleep(options.iterationsIntervalTime)
+      }
     }
     let showFooter = function () {
       console.log()
       console.log(chalk.bold.magenta('Thanks for choosing Seaquest ;)'))
     }
     let showResponse = function (error, response, body) {
-      console.log(chalk.blue('TIMELAPSE') + ' ' + (executionEnd - executionStart) + 'ms')
+      let currentIteration = overallIteration + 1
+
+      overallIteration++
 
       if (error != null) {
+        console.log(chalk.blue('TIMELAPSE') + ' ' + (executionEnd - executionStart) + 'ms')
         console.log(chalk.bgRed.white(error))
       } else {
-        let responseBodyWrapper = function (body) {
-          return chalk.bgCyan.black('[[') + body + chalk.bgCyan.black(']]')
-        }
-        let responseBody = chalk.bgWhite.black(body)
-        let responseTruncated = false
-
-        if (!options.uncutResponse) {
-          responseBody = chalk.bgWhite.black(body.substring(0, options.responseLimit))
-
-          if (body.length > options.responseLimit) {
-            options.responseJson = false
-            responseTruncated = true
-            responseBody += chalk.bgCyan.black('...')
+        if (options.iterations === 1) {
+          let responseBodyWrapper = function (body) {
+            return chalk.bgCyan.black('[[') + body + chalk.bgCyan.black(']]')
           }
-        }
+          let responseBody = chalk.bgWhite.black(body)
+          let responseTruncated = false
 
-        console.log(chalk.blue('HTTP') + ' ' + (response && response.statusCode))
+          console.log(chalk.blue('TIMELAPSE') + ' ' + (executionEnd - executionStart) + 'ms')
 
-        if (options.verbose) {
-          for (let header in response.headers) {
-            console.log(chalk.cyan('HEADER'), header + ': ' + response.headers[header])
+          if (!options.uncutResponse) {
+            responseBody = chalk.bgWhite.black(body.substring(0, options.responseLimit))
+
+            if (body.length > options.responseLimit) {
+              options.responseJson = false
+              responseTruncated = true
+              responseBody += chalk.bgCyan.black('...')
+            }
           }
-        }
 
-        if (body.length > 0) {
-          if (!options.responseJson) {
-            console.log(responseBodyWrapper(responseBody))
+          console.log(chalk.blue('HTTP') + ' ' + (response && response.statusCode))
+
+          if (options.verbose) {
+            for (let header in response.headers) {
+              console.log(chalk.cyan('HEADER'), header + ': ' + response.headers[header])
+            }
+          }
+
+          if (body.length > 0) {
+            if (!options.responseJson) {
+              console.log(responseBodyWrapper(responseBody))
+            } else {
+              console.dir(JSON.parse(body), { colors: true })
+            }
           } else {
-            console.dir(JSON.parse(body), { colors: true })
+            console.log(chalk.italic.yellowBright('no-content'))
           }
-        } else {
-          console.log(chalk.italic.yellowBright('no-content'))
-        }
 
-        if (responseTruncated) {
-          console.log(chalk.bgYellow.black('Response truncated at ' + options.responseLimit))
+          if (responseTruncated) {
+            console.log(chalk.bgYellow.black('Response truncated at ' + options.responseLimit))
+          }
+
+          showFooter()
+        } else {
+          console.log('#' + currentIteration + ' ' + chalk.blue('HTTP') + ' ' + (response && response.statusCode) + ' ' + chalk.blue('TIMELAPSE') + ' ' + (executionEnd - executionStart) + 'ms')
+
+          if (currentIteration === options.iterations) {
+            showFooter()
+          }
         }
       }
-
-      showFooter()
     }
     let showHelp = function () {
       console.log(chalk.blue('-e') + ', ' + chalk.blue('--endpoint') + '         The remote address for the calling endpoint.')
@@ -148,6 +185,17 @@
       console.log('                       response')
       console.log('                       Default is ' + chalk.yellow('3000'))
       console.log('                       Ex.: ' + chalk.bgWhite.black('-t 10000'))
+      console.log(chalk.blue('-b') + ', ' + chalk.blue('--body') + '          The body content to be sent on request.')
+      console.log('                       Default is empty')
+      console.log('                       Ex.: ' + chalk.bgWhite.black('-b { "id": "string", "length": 5 }'))
+      console.log(chalk.blue('-i') + ', ' + chalk.blue('--iteration') + '          The number calls to be made. When higher than')
+      console.log('                       1 the output is reduced.')
+      console.log('                       Default is ' + chalk.yellow('1'))
+      console.log('                       Ex.: ' + chalk.bgWhite.black('-i 5'))
+      console.log(chalk.blue('-r') + ', ' + chalk.blue('--iterationsIntervalTime') + '          The millisecond interval between')
+      console.log('                       iterations calls.')
+      console.log('                       Default is ' + chalk.yellow('1000'))
+      console.log('                       Ex.: ' + chalk.bgWhite.black('-r 5000'))
       console.log(chalk.blue('-l') + ', ' + chalk.blue('--responseLimit') + '    The maximum size of response body to output')
       console.log('                       in the console')
       console.log('                       Default is ' + chalk.yellow('5120'))
